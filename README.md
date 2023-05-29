@@ -15,13 +15,13 @@ Before running the bot, make sure you have the following:
 2. Install the required dependencies by running `pip install -r requirements.txt`.
 3. Create a new file named `.env` in the project directory and add the following environment variables:
 
-```json
+```
 LOG_LEVEL=INFO
 ```
 
 4. Create a `config.json` file in the project directory with the following structure:
 
-```
+```json
 {
   "REDDIT_CLIENT_ID": "YOUR_REDDIT_CLIENT_ID",
   "REDDIT_CLIENT_SECRET": "YOUR_REDDIT_CLIENT_SECRET",
