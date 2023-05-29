@@ -21,6 +21,7 @@ LOG_LEVEL=INFO
 
 4. Create a `config.json` file in the project directory with the following structure:
 
+```
 {
   "REDDIT_CLIENT_ID": "YOUR_REDDIT_CLIENT_ID",
   "REDDIT_CLIENT_SECRET": "YOUR_REDDIT_CLIENT_SECRET",
@@ -30,6 +31,7 @@ LOG_LEVEL=INFO
   "SLEEP_TIME": 300,
   "MINIMUM_SCORE": 1000
 }
+```
 
 Make sure to replace the placeholder values with your actual Reddit client ID, client secret, user agent, target subreddit, Discord webhook URL, and other desired configurations.
 
