@@ -61,8 +61,3 @@ Feel free to adjust these values according to your needs.
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for more information.
-
-
-
-
-# Reddit-Discord-Bot
