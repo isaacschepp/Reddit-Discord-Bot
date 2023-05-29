@@ -15,7 +15,7 @@ Before running the bot, make sure you have the following:
 2. Install the required dependencies by running `pip install -r requirements.txt`.
 3. Create a new file named `.env` in the project directory and add the following environment variables:
 
-```
+```json
 LOG_LEVEL=INFO
 ```
 
