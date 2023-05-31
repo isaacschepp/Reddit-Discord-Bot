@@ -23,6 +23,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("reddit_bot")
 
+
 class RedditBot:
     """A Reddit bot that posts content to Discord."""
 
@@ -30,6 +31,16 @@ class RedditBot:
     logger = logging.getLogger("reddit_bot")
 
     def __init__(self, reddit: praw.Reddit, subreddit: praw.models.Subreddit, webhook_url: str, sleep_time: int, minimum_score: int):
+        """
+        Initialize the RedditBot.
+
+        Args:
+            reddit: An instance of the `praw.Reddit` class.
+            subreddit: An instance of the `praw.models.Subreddit` class.
+            webhook_url: The Discord webhook URL for posting content.
+            sleep_time: The time (in seconds) to sleep between checking for new posts.
+            minimum_score: The minimum score a post must have to be considered valid.
+        """
         self.reddit = reddit
         self.subreddit = subreddit
         self.webhook_url = webhook_url
@@ -38,7 +49,12 @@ class RedditBot:
         self.posted_reddit_ids = self.load_posted_ids()
 
     def load_posted_ids(self) -> Set[str]:
-        """Loads IDs of posts that have been posted to Discord."""
+        """
+        Loads IDs of posts that have been posted to Discord.
+
+        Returns:
+            A set containing the IDs of posts that have been posted to Discord.
+        """
         if os.path.isfile(self.POSTED_IDS_FILE):
             with open(self.POSTED_IDS_FILE, 'r') as f:
                 return set(json.load(f))
@@ -47,14 +63,24 @@ class RedditBot:
             return set()
 
     def save_posted_id(self, id: str) -> None:
-        """Saves ID of a post that has been posted to Discord."""
+        """
+        Saves ID of a post that has been posted to Discord.
+
+        Args:
+            id: The ID of the post to be saved.
+        """
         self.posted_reddit_ids.add(id)
         with open(self.POSTED_IDS_FILE, 'w') as f:
             json.dump(list(self.posted_reddit_ids), f)
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=60))
     def post_to_discord(self, content: str) -> None:
-        """Posts content to Discord, retrying up to 3 times with exponential backoff."""
+        """
+        Posts content to Discord, retrying up to 3 times with exponential backoff.
+
+        Args:
+            content: The content to be posted to Discord.
+        """
         self.logger.info("Attempting to post to Discord")
         response = requests.post(self.webhook_url, data={"content": content})
         if response.status_code != 200:
@@ -68,11 +94,24 @@ class RedditBot:
         self.logger.info("Post to Discord successful")
 
     def is_valid_post(self, post: praw.models.Submission) -> bool:
-        """Checks if the post is valid."""
+        """
+        Checks if the post is valid.
+
+        Args:
+            post: An instance of the `praw.models.Submission` class.
+
+        Returns:
+            True if the post is valid, False otherwise.
+        """
         return post.score >= self.minimum_score and post.id not in self.posted_reddit_ids
 
     def process_post(self, post: praw.models.Submission) -> None:
-        """Processes a single Reddit post."""
+        """
+        Processes a single Reddit post.
+
+        Args:
+            post: An instance of the `praw.models.Submission` class.
+        """
         content = f"**{post.title}**\n{post.url}"
         try:
             self.post_to_discord(content)
@@ -82,12 +121,19 @@ class RedditBot:
             self.logger.error(f"Error posting to Discord: {e}", exc_info=True)
 
     def get_new_posts(self) -> List[praw.models.Submission]:
-        """Gets new posts from the subreddit."""
+        """
+        Gets new posts from the subreddit.
+
+        Returns:
+            A list of `praw.models.Submission` instances representing new posts.
+        """
         return list(self.subreddit.new(limit=100))
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=60))
     def check_reddit_posts(self) -> None:
-        """Checks for new Reddit posts and posts them to Discord, retrying up to 3 times with exponential backoff."""
+        """
+        Checks for new Reddit posts and posts them to Discord, retrying up to 3 times with exponential backoff.
+        """
         self.logger.info("Checking for new Reddit posts")
         try:
             new_posts = self.get_new_posts()
@@ -111,7 +157,11 @@ class RedditBot:
             finally:
                 time.sleep(self.sleep_time)
 
+
 def main() -> None:
+    """
+    Entry point of the script.
+    """
     config = get_configuration()
 
     reddit = praw.Reddit(
@@ -126,6 +176,7 @@ def main() -> None:
 
     bot = RedditBot(reddit, subreddit, webhook_url, sleep_time, minimum_score)
     bot.run()
+
 
 if __name__ == "__main__":
     # handle termination signals
