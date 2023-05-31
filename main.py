@@ -42,8 +42,12 @@ def main() -> None:
 @contextlib.contextmanager
 def signal_handler(logger):
     def _signal_handler(sig, frame):
-        logger.info("Bot is shutting down due to termination signal")
-        sys.exit(0)
+        if sig == signal.SIGINT:
+            logger.info("Bot is shutting down due to user interruption")
+            sys.exit(0)
+        else:
+            logger.info("Bot is shutting down due to termination signal")
+            sys.exit(1)
 
     signal.signal(signal.SIGTERM, _signal_handler)
     signal.signal(signal.SIGINT, _signal_handler)
