@@ -20,32 +20,31 @@ class EnvVar:
     SLEEP_TIME = 'SLEEP_TIME'
     MINIMUM_SCORE = 'MINIMUM_SCORE'
 
+ENV_VAR_TYPES = {
+    EnvVar.REDDIT_CLIENT_ID: str,
+    EnvVar.REDDIT_CLIENT_SECRET: str,
+    EnvVar.REDDIT_USER_AGENT: str,
+    EnvVar.SUBREDDIT: str,
+    EnvVar.WEBHOOK_URL: str,
+    EnvVar.SLEEP_TIME: int,
+    EnvVar.MINIMUM_SCORE: int
+}
+
 def get_configuration() -> Configuration:
     """Loads the configuration from environment variables."""
     load_dotenv()
-    
-    env_vars = [
-        EnvVar.REDDIT_CLIENT_ID,
-        EnvVar.REDDIT_CLIENT_SECRET,
-        EnvVar.REDDIT_USER_AGENT,
-        EnvVar.SUBREDDIT,
-        EnvVar.WEBHOOK_URL,
-        EnvVar.SLEEP_TIME,
-        EnvVar.MINIMUM_SCORE
-    ]
 
-    for var in env_vars:
-        if var not in os.environ:
+    config_values = {}
+    for var in ENV_VAR_TYPES:
+        value = os.getenv(var)
+        if value is None:
             raise ValueError(f"Missing environment variable: {var}")
+        key = var.lower()  # Convert to lowercase
+        if key in ["sleep_time", "minimum_score"]:
+            config_values[key] = int(value)  # Cast to int for these keys
+        else:
+            config_values[key] = value  # Use as is for other keys
 
-    config = Configuration(
-        reddit_client_id=os.environ[EnvVar.REDDIT_CLIENT_ID],
-        reddit_client_secret=os.environ[EnvVar.REDDIT_CLIENT_SECRET],
-        reddit_user_agent=os.environ[EnvVar.REDDIT_USER_AGENT],
-        subreddit=os.environ[EnvVar.SUBREDDIT],
-        webhook_url=os.environ[EnvVar.WEBHOOK_URL],
-        sleep_time=int(os.environ.get(EnvVar.SLEEP_TIME, 300)),
-        minimum_score=int(os.environ.get(EnvVar.MINIMUM_SCORE, 1000))
-    )
+    config = Configuration(**config_values)
 
     return config

@@ -45,8 +45,9 @@ def main() -> None:
         sys.exit(0)
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}", exc_info=True)
+        bot.shutdown()
         sys.exit(1)
-        
+
 @contextlib.contextmanager
 def signal_handler(logger):
     def _signal_handler(sig, frame):
