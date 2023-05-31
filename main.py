@@ -37,8 +37,16 @@ def main() -> None:
     minimum_score = config.minimum_score
 
     bot = RedditBot(reddit, subreddit, webhook_url, sleep_time, minimum_score)
-    bot.run()
-
+    try:
+        bot.run()
+    except (SystemExit, KeyboardInterrupt):
+        bot.shutdown()
+        logger.info("Bot is shutting down gracefully.")
+        sys.exit(0)
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}", exc_info=True)
+        sys.exit(1)
+        
 @contextlib.contextmanager
 def signal_handler(logger):
     def _signal_handler(sig, frame):

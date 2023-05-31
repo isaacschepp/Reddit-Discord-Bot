@@ -149,3 +149,8 @@ class RedditBot:
                 self.logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             finally:
                 time.sleep(self.sleep_time)
+
+    def shutdown(self) -> None:
+        """Cleans up resources before shutting down."""
+        # Here, you might close open connections, save data, etc.
+        pass
