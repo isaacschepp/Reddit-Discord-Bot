@@ -4,7 +4,7 @@ This project is a Reddit-to-Discord bot that fetches new posts from a specified 
 
 ## Prerequisites
 
-* Python 3.7 or above
+* Python 3.8 or above
 * Reddit API credentials (client ID, client secret, and user agent)
 * Discord webhook URL
 
