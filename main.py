@@ -27,15 +27,15 @@ class RedditBot:
     """A Reddit bot that posts content to Discord."""
 
     POSTED_IDS_FILE = 'posted_ids.json'
+    logger = logging.getLogger("reddit_bot")
 
-    def __init__(self, reddit: praw.Reddit, subreddit: praw.models.Subreddit, webhook_url: str, sleep_time: int, minimum_score: int, logger: logging.Logger):
+    def __init__(self, reddit: praw.Reddit, subreddit: praw.models.Subreddit, webhook_url: str, sleep_time: int, minimum_score: int):
         self.reddit = reddit
         self.subreddit = subreddit
         self.webhook_url = webhook_url
         self.sleep_time = sleep_time
         self.minimum_score = minimum_score
         self.posted_reddit_ids = self.load_posted_ids()
-        self.logger = logger
 
     def load_posted_ids(self) -> Set[str]:
         """Loads IDs of posts that have been posted to Discord."""
@@ -124,9 +124,8 @@ def main() -> None:
     sleep_time = config.sleep_time
     minimum_score = config.minimum_score
 
-    bot = RedditBot(reddit, subreddit, webhook_url, sleep_time, minimum_score, logger)
+    bot = RedditBot(reddit, subreddit, webhook_url, sleep_time, minimum_score)
     bot.run()
-
 
 if __name__ == "__main__":
     # handle termination signals
