@@ -14,6 +14,12 @@ class RedditBot:
     POSTED_IDS_FILE = 'posted_ids.json'
     logger = logging.getLogger("reddit_bot")
 
+    HTTP_ERROR_MESSAGES = {
+    403: "Forbidden: the request was valid, but the server is refusing action",
+    404: "Not Found: The requested resource could not be found on the server",
+    # Add more specific error messages based on the status code
+    }
+
     def __init__(self, reddit: praw.Reddit, subreddit: praw.models.Subreddit, webhook_url: str, sleep_time: int, minimum_score: int):
         """
         Initialize the RedditBot.
@@ -32,6 +38,8 @@ class RedditBot:
         self.minimum_score = minimum_score
         self.posted_reddit_ids = self.load_posted_ids()
 
+
+
     def load_posted_ids(self) -> Set[str]:
         """
         Loads IDs of posts that have been posted to Discord.
@@ -40,8 +48,12 @@ class RedditBot:
             A set containing the IDs of posts that have been posted to Discord.
         """
         if os.path.isfile(self.POSTED_IDS_FILE):
-            with open(self.POSTED_IDS_FILE, 'r') as f:
-                return set(json.load(f))
+            try:
+                with open(self.POSTED_IDS_FILE, 'r') as f:
+                    return set(json.load(f))
+            except json.JSONDecodeError:
+                self.logger.error(f"JSONDecodeError for file {self.POSTED_IDS_FILE}. Creating a new set.")
+                return set()
         else:
             self.logger.warning(f"{self.POSTED_IDS_FILE} not found. Creating a new set.")
             return set()
@@ -56,6 +68,8 @@ class RedditBot:
         self.posted_reddit_ids.add(id)
         with open(self.POSTED_IDS_FILE, 'w') as f:
             json.dump(list(self.posted_reddit_ids), f)
+            f.flush()
+            os.fsync(f.fileno())
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=60))
     def post_to_discord(self, content: str) -> None:
@@ -68,13 +82,8 @@ class RedditBot:
         self.logger.info("Attempting to post to Discord")
         response = requests.post(self.webhook_url, data={"content": content})
         if response.status_code != 200:
-            if response.status_code == 403:
-                raise requests.HTTPError("Forbidden: the request was valid, but the server is refusing action")
-            elif response.status_code == 404:
-                raise requests.HTTPError("Not Found: The requested resource could not be found on the server")
-            # Add more specific error messages based on the status code
-            else:
-                response.raise_for_status()
+            error_message = self.HTTP_ERROR_MESSAGES.get(response.status_code, "An error occurred with the request")
+            raise requests.HTTPError(error_message)
         self.logger.info("Post to Discord successful")
 
     def is_valid_post(self, post: praw.models.Submission) -> bool:

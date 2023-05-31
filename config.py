@@ -23,17 +23,17 @@ def get_configuration() -> Configuration:
     ]
 
     for var in env_vars:
-        if not os.getenv(var):
+        if var not in os.environ:
             raise ValueError(f"Missing environment variable: {var}")
 
     config = Configuration(
-        reddit_client_id=os.getenv('REDDIT_CLIENT_ID'),
-        reddit_client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
-        reddit_user_agent=os.getenv('REDDIT_USER_AGENT'),
-        subreddit=os.getenv('SUBREDDIT'),
-        webhook_url=os.getenv('WEBHOOK_URL'),
-        sleep_time=int(os.getenv('SLEEP_TIME', 300)),
-        minimum_score=int(os.getenv('MINIMUM_SCORE', 1000))
+        reddit_client_id=os.environ['REDDIT_CLIENT_ID'],
+        reddit_client_secret=os.environ['REDDIT_CLIENT_SECRET'],
+        reddit_user_agent=os.environ['REDDIT_USER_AGENT'],
+        subreddit=os.environ['SUBREDDIT'],
+        webhook_url=os.environ['WEBHOOK_URL'],
+        sleep_time=int(os.environ.get('SLEEP_TIME', 300)),
+        minimum_score=int(os.environ.get('MINIMUM_SCORE', 1000))
     )
 
     return config

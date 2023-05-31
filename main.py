@@ -4,6 +4,7 @@ import logging
 from dotenv import load_dotenv
 import signal
 import sys
+import contextlib
 
 from config import get_configuration
 from reddit_bot import RedditBot
@@ -38,14 +39,20 @@ def main() -> None:
     bot = RedditBot(reddit, subreddit, webhook_url, sleep_time, minimum_score)
     bot.run()
 
-
-if __name__ == "__main__":
-    # handle termination signals
-    def signal_handler(sig, frame):
+@contextlib.contextmanager
+def signal_handler(logger):
+    def _signal_handler(sig, frame):
         logger.info("Bot is shutting down due to termination signal")
         sys.exit(0)
 
-    signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, _signal_handler)
+    signal.signal(signal.SIGINT, _signal_handler)
+    try:
+        yield
+    finally:
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    main()
+if __name__ == "__main__":
+    with signal_handler(logger):
+        main()
