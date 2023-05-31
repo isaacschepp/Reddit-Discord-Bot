@@ -1,12 +1,7 @@
 import os
 import praw
-import requests
-import time
 import logging
 from dotenv import load_dotenv
-from typing import Set, List
-from tenacity import retry, stop_after_attempt, wait_exponential
-import json
 import signal
 import sys
 
