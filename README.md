@@ -18,7 +18,6 @@ Before running the bot, make sure you have the following:
 ```
 LOG_LEVEL=INFO
 ```
-
 4. Create a `config.json` file in the project directory with the following structure:
 
 ```json
@@ -31,7 +30,6 @@ LOG_LEVEL=INFO
   "SLEEP_TIME": 300,
   "MINIMUM_SCORE": 1000
 }
-```
 
 Make sure to replace the placeholder values with your actual Reddit client ID, client secret, user agent, target subreddit, Discord webhook URL, and other desired configurations.
 

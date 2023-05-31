@@ -2,3 +2,4 @@
 bot.log
 config.json
 posted_ids.json
+__pycache__/
