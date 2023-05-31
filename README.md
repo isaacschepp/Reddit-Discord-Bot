@@ -1,63 +1,59 @@
-# Reddit Discord Bot
+# Reddit-to-Discord Bot
 
-This is a Reddit bot that posts content from a specified subreddit to Discord. It uses the PRAW library to interact with Reddit's API and the requests library to post content to Discord webhooks.
+This project is a Reddit-to-Discord bot that fetches new posts from a specified subreddit and posts them to a Discord channel using a webhook. The bot is built using Python and utilizes the `praw` library for interacting with the Reddit API, `requests` for making HTTP requests to the Discord webhook, and `tenacity` for implementing retry logic. The configuration is loaded from environment variables using `python-dotenv`.
+
+
 
 ## Prerequisites
-Before running the bot, make sure you have the following:
 
-* Python 3.6 or above installed.
-* PRAW library installed. You can install it using `pip install praw`.
-* dotenv library installed. You can install it using `pip install python-dotenv`.
+* Python 3.7 or above
+* Reddit API credentials (client ID, client secret, and user agent)
+* Discord webhook URL
+
 
 ## Installation
 
-1. Clone the repository or download the files to your local machine.
-2. Install the required dependencies by running `pip install -r requirements.txt`.
-3. Create a new file named `.env` in the project directory and add the following environment variables:
+1. Clone the repository: `git clone https://github.com/isaacschepp/Reddit-Discord-Bot.git`
+2. Change into the project directory: `cd Reddit-Discord-Bot`
+3. Install the required dependencies: `pip install -r requirements.txt`
 
-```
-LOG_LEVEL=INFO
-```
-4. Create a `config.json` file in the project directory with the following structure:
+## Configuration:
+The bot requires the following environment variables to be set:
 
-```json
-{
-  "REDDIT_CLIENT_ID": "YOUR_REDDIT_CLIENT_ID",
-  "REDDIT_CLIENT_SECRET": "YOUR_REDDIT_CLIENT_SECRET",
-  "REDDIT_USER_AGENT": "YOUR_REDDIT_USER_AGENT",
-  "SUBREDDIT": "TARGET_SUBREDDIT",
-  "WEBHOOK_URL": "YOUR_DISCORD_WEBHOOK_URL",
-  "SLEEP_TIME": 300,
-  "MINIMUM_SCORE": 1000
-}
+* `REDDIT_CLIENT_ID`: The client ID of your Reddit application.
+* `REDDIT_CLIENT_SECRET`: The client secret of your Reddit application.
+* `REDDIT_USER_AGENT`: The user agent for your Reddit application.
+* `SUBREDDIT`: The name of the subreddit from which to fetch new posts.
+* `WEBHOOK_URL`: The URL of the Discord webhook to post the content.
+* `SLEEP_TIME` (optional): The time to sleep between checking for new posts (default: 300 seconds).
+* `MINIMUM_SCORE` (optional): The minimum score a post must have to be considered (default: 1000).
 
-Make sure to replace the placeholder values with your actual Reddit client ID, client secret, user agent, target subreddit, Discord webhook URL, and other desired configurations.
+Create a `.env` file in the project directory and add the above environment variables with their corresponding values.
 
 ## Usage
 
-To start the bot, run the following command:
-```
+Run the bot by executing the `main.py` script:
+
+```bash
 python main.py
 ```
 
-The bot will continuously check for new posts on the specified subreddit. If a post meets the minimum score requirement and has not been posted to Discord before, it will be posted to the specified Discord channel using the provided webhook URL.
+The bot will continuously check for new posts on the specified subreddit and post them to the configured Discord channel using the webhook.
 
-## Logging
-
-The bot logs its activity to both a file (`bot.log`) and the console. The log level can be configured in the `.env` file using the `LOG_LEVEL` environment variable. By default, the log level is set to `INFO`.
-
-## Handling Errors
-
-The bot implements retry mechanisms for posting to Discord and checking Reddit posts to handle intermittent errors. It will retry up to 3 times with an exponential backoff delay before giving up. If an unexpected error occurs, the bot will wait for a longer period before retrying.
-
-## Customization
-
-You can customize the behavior of the bot by modifying the `config.json` file. The following options are available:
-
-* `SLEEP_TIME` (optional): The time to wait between each check for new Reddit posts, in seconds. Default is 300 seconds (5 minutes).
-* `MINIMUM_SCORE` (optional): The minimum score a Reddit post must have to be considered valid. Default is 1000.
-
-Feel free to adjust these values according to your needs.
+To stop the bot, press `Ctrl + C` or send a termination signal.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for more information.
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Additional Files
+
+* `.gitignore`: Specifies which files and directories should be ignored by Git.
+* `bot.log`: Log file where the bot logs its activities.
+* `config.json`: Configuration file for the bot (not used in this project).
+* `posted_ids.json`: JSON file to store the IDs of posts that have been posted to Discord.
+* `__pycache__/`: Directory containing Python bytecode files (automatically generated).
+* `requirements.txt`: File listing the required Python packages and their versions.
+
+## Credits
+This project was created by Isaac Schepp and is based on the [Reddit API](https://www.reddit.com/dev/api/) and [Discord Webhooks](https://discord.com/developers/docs/resources/webhook).
