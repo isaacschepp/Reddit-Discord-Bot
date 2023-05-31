@@ -8,6 +8,7 @@ import contextlib
 
 from config import get_configuration
 from reddit_bot import RedditBot
+from types import FrameType
 
 load_dotenv()
 logging.basicConfig(
@@ -49,8 +50,8 @@ def main() -> None:
         sys.exit(1)
 
 @contextlib.contextmanager
-def signal_handler(logger):
-    def _signal_handler(sig, frame):
+def signal_handler(logger: logging.Logger):
+    def _signal_handler(sig: signal.Signals, frame: FrameType):
         if sig == signal.SIGINT:
             logger.info("Bot is shutting down due to user interruption")
             sys.exit(0)

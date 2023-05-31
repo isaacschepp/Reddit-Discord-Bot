@@ -37,9 +37,8 @@ class RedditBot:
         self.sleep_time = sleep_time
         self.minimum_score = minimum_score
         self.posted_reddit_ids = self.load_posted_ids()
-
-
-
+        self.file = open(self.POSTED_IDS_FILE, 'a+')  # Open file in append+read mode
+        
     def load_posted_ids(self) -> Set[str]:
         """
         Loads IDs of posts that have been posted to Discord.
@@ -79,9 +78,9 @@ class RedditBot:
         Args:
             content: The content to be posted to Discord.
         """
-        self.logger.info("Attempting to post to Discord")
+        self.logger.info(f"Attempting to post to Discord: {content}")  # Log the content to be posted
         response = requests.post(self.webhook_url, data={"content": content})
-        if response.status_code != 200:
+        if not response.ok:  # Use the .ok property to check for successful requests
             error_message = self.HTTP_ERROR_MESSAGES.get(response.status_code, "An error occurred with the request")
             raise requests.HTTPError(error_message)
         self.logger.info("Post to Discord successful")
@@ -152,5 +151,5 @@ class RedditBot:
 
     def shutdown(self) -> None:
         """Cleans up resources before shutting down."""
-        # Here, you might close open connections, save data, etc.
-        pass
+        self.file.flush()  # Ensures any buffered content is written to disk
+        self.file.close()  # Close the file
