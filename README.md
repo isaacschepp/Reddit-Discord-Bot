@@ -2,20 +2,28 @@
 
 This project is a Reddit-to-Discord bot that fetches new posts from a specified subreddit and posts them to a Discord channel using a webhook. The bot is built using Python and utilizes the `praw` library for interacting with the Reddit API, `requests` for making HTTP requests to the Discord webhook, and `tenacity` for implementing retry logic. The configuration is loaded from environment variables using `python-dotenv`.
 
-
-
 ## Prerequisites
 
 * Python 3.7 or above
 * Reddit API credentials (client ID, client secret, and user agent)
 * Discord webhook URL
 
-
 ## Installation
 
 1. Clone the repository: `git clone https://github.com/isaacschepp/Reddit-Discord-Bot.git`
 2. Change into the project directory: `cd Reddit-Discord-Bot`
-3. Install the required dependencies: `pip install -r requirements.txt`
+3. Create a new virtual environment:
+   - **Windows**:
+     ```
+     python -m venv .venv
+     .venv\Scripts\activate
+     ```
+   - **macOS and Linux**:
+     ```
+     python3 -m venv .venv
+     source .venv/bin/activate
+     ```
+4. Install the required dependencies: `pip install -r requirements.txt`
 
 ## Configuration:
 The bot requires the following environment variables to be set:
